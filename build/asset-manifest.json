@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/fitness/workouts/build/static/css/main.d04ec02f.css",
+    "main.js": "/fitness/workouts/build/static/js/main.6fd44fef.js",
+    "static/js/453.e5c3e619.chunk.js": "/fitness/workouts/build/static/js/453.e5c3e619.chunk.js",
+    "index.html": "/fitness/workouts/build/index.html",
+    "main.d04ec02f.css.map": "/fitness/workouts/build/static/css/main.d04ec02f.css.map",
+    "main.6fd44fef.js.map": "/fitness/workouts/build/static/js/main.6fd44fef.js.map",
+    "453.e5c3e619.chunk.js.map": "/fitness/workouts/build/static/js/453.e5c3e619.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d04ec02f.css",
+    "static/js/main.6fd44fef.js"
+  ]
+}
