@@ -6,34 +6,45 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
   const [completedExerciseId, setCompletedExerciseId] = useState(null);
 
   useEffect(() => {
+    console.log("exercise??")
     if (exercise) {
+      console.log("yes, exercise")
       initializeExercise();
     }
   }, [exercise]);
 
   const initializeExercise = async () => {
     try {
-      const startTime = new Date().toISOString();
-      const response = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ exercise_id: exercise.exercise_id, start_time: startTime }),
-      });
+      // if (completedExerciseId) {
 
-      const data = await response.json();
-      setCompletedExerciseId(data.completedExerciseId);
+      //   console.log("Fetch existing sets from backend, exerciseId", completedExerciseId)
+      //   const setsResponse = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises/${completedExerciseId}/sets`);
+      //   const setsData = await setsResponse.json();
+      //   setSets(setsData.sets || []);
+      // } else {
+        console.log("initializing a new one")
+        const startTime = new Date().toISOString();
+        const response = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ exercise_id: exercise.exercise_id, start_time: startTime }),
+        });
 
-      // Initialize sets based on exercise type
-      const setsToCreate = exercise.set_type_id === 4 ? 1 : 3;
-      const initialSets = Array.from({ length: setsToCreate }, () => ({
-        reps: '',
-        weight: '',
-        rir: null,
-        rpe: null,
-        set_type_id: exercise.set_type_id,
-      }));
+        const data = await response.json();
+        setCompletedExerciseId(data.completedExerciseId);
 
-      setSets(initialSets);
+        // Initialize sets based on exercise type
+        const setsToCreate = exercise.set_type_id === 4 ? 1 : 3;
+        const initialSets = Array.from({ length: setsToCreate }, () => ({
+          reps: '',
+          weight: '',
+          rir: null,
+          rpe: null,
+          set_type_id: exercise.set_type_id,
+        }));
+
+        setSets(initialSets);
+      // }
     } catch (error) {
       console.error('Error initializing exercise:', error);
     }
@@ -82,7 +93,7 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
       {sets.map((set, index) => (
         <SetSubform key={index} set={set} index={index} onChange={handleSetChange} />
       ))}
-      <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <button onClick={handlePreviousExercise}>Previous Exercise</button>
         <button onClick={handleNextExercise}>Next Exercise</button>
       </div>

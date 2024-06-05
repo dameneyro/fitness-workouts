@@ -29,6 +29,7 @@ const App = () => {
   };
 
   const handleBack = () => {
+    console.log("WE'RE GOING BACK FROM ", currentExerciseIndex);
     setCurrentExerciseIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
 
