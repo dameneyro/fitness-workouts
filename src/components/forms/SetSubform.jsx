@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './SetSubform.css'; // Import CSS for the subform if needed
+import '../../App.css'; // Import CSS for the subform if needed
 
 const SetSubform = ({ set, index, onChange }) => {
   const [reps, setReps] = useState(set.reps || '');

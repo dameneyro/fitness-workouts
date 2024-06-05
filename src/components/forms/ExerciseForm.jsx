@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SetSubform from './SetSubform';
-import './ExerciseForm.css';  // Make sure to import your CSS file
+import '../../App.css';  // Make sure to import your CSS file
 
 const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
   const [sets, setSets] = useState([]);
