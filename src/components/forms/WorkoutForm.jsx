@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import BeginWorkoutButton from './BeginWorkoutButton';
+import BeginWorkoutButton from '../buttons/BeginWorkoutButton';
 
 const WorkoutForm = ({ onBegin }) => {
   const [userId, setUserId] = useState('');
@@ -11,16 +11,13 @@ const WorkoutForm = ({ onBegin }) => {
       try {
         const response = await fetch('https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/templates', {
           method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
         const data = await response.json();
         const parsedData = JSON.parse(data.body);
-
-        if (Array.isArray(parsedData)) {
-          setTemplates(parsedData);
-        } else {
-          console.error('Parsed data is not an array:', parsedData);
-        }
+        setTemplates(parsedData);
       } catch (error) {
         console.error('Error fetching templates:', error);
       }
@@ -42,7 +39,6 @@ const WorkoutForm = ({ onBegin }) => {
         const data = await response.json();
         const parsedBody = JSON.parse(data.body);
         const { workoutId, exercises } = parsedBody;
-
         onBegin(userId, workoutId, exercises);
       } catch (error) {
         console.error('Error fetching exercises:', error);
@@ -84,4 +80,3 @@ const WorkoutForm = ({ onBegin }) => {
 };
 
 export default WorkoutForm;
-
