@@ -1,28 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import SetSubform from './SetSubform';
+import './ExerciseForm.css';  // Make sure to import your CSS file
 
 const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
   const [sets, setSets] = useState([]);
   const [completedExerciseId, setCompletedExerciseId] = useState(null);
 
   useEffect(() => {
-    console.log("exercise??")
+    console.log("Reloading with exercise ", exercise);
     if (exercise) {
-      console.log("yes, exercise")
+      console.log("Initializing");
       initializeExercise();
     }
   }, [exercise]);
 
   const initializeExercise = async () => {
     try {
-      // if (completedExerciseId) {
+      console.log("In initialization method");
 
-      //   console.log("Fetch existing sets from backend, exerciseId", completedExerciseId)
-      //   const setsResponse = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises/${completedExerciseId}/sets`);
+      // Check if exercise is already initialized
+      // if (completedExerciseId) {
+      //   // Fetch existing sets from backend
+      //   const setsResponse = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises/${completedExerciseId}/sets`, {
+      //     method: 'GET',
+      //     headers: { 'Content-Type': 'application/json' }
+      //   });
       //   const setsData = await setsResponse.json();
       //   setSets(setsData.sets || []);
       // } else {
-        console.log("initializing a new one")
+        // Initialize new exercise
         const startTime = new Date().toISOString();
         const response = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises`, {
           method: 'POST',
@@ -87,13 +93,13 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
   }
 
   return (
-    <div>
+    <div className="form-container">
       <h2>{exercise.name}</h2>
       <p>{exercise.description}</p>
       {sets.map((set, index) => (
         <SetSubform key={index} set={set} index={index} onChange={handleSetChange} />
       ))}
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div className="button-group">
         <button onClick={handlePreviousExercise}>Previous Exercise</button>
         <button onClick={handleNextExercise}>Next Exercise</button>
       </div>

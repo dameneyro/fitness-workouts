@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './SetSubform.css'; // Import CSS for the subform if needed
 
 const SetSubform = ({ set, index, onChange }) => {
   const [reps, setReps] = useState(set.reps || '');
@@ -26,7 +27,7 @@ const SetSubform = ({ set, index, onChange }) => {
   };
 
   return (
-    <div>
+    <div className="form-group">
       <h3>Set {index + 1}</h3>
       <div>
         <label>Reps:</label>
