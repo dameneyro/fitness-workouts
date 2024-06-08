@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../App.css'; // Import CSS for the subform if needed
 
-const SetSubform = ({ set, index, onChange }) => {
+const SetSubform = ({ set, index, onChange, setType }) => {
   const [reps, setReps] = useState(set.reps || '');
   const [weight, setWeight] = useState(set.weight || '');
   const [rir, setRir] = useState(set.rir !== undefined ? set.rir : null);
@@ -30,7 +30,7 @@ const SetSubform = ({ set, index, onChange }) => {
     <div className="form-group">
       <h3>Set {index + 1}</h3>
       <div>
-        <label>Reps:</label>
+        <label>{setType === 5 ? 'Seconds:' : 'Reps:'}</label>
         <input type="number" value={reps} onChange={(e) => { setReps(e.target.value); onChange(index, 'reps', e.target.value); }} />
       </div>
       <div>
