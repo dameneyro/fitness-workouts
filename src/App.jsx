@@ -12,11 +12,17 @@ const App = () => {
   const handleBeginWorkout = (userId, workoutId, exercises) => {
     setUserId(userId);
     setWorkoutId(workoutId);
-    setExercises(exercises);
+    setExercises(exercises.map(exercise => ({ ...exercise, completedExerciseId: null })));
     setCurrentExerciseIndex(0);
   };
 
-  const handleExerciseSubmit = () => {
+  const handleExerciseSubmit = (completedExerciseId) => {
+    setExercises(prevExercises => 
+      prevExercises.map((exercise, index) =>
+        index === currentExerciseIndex ? { ...exercise, completedExerciseId } : exercise
+      )
+    );
+
     if (currentExerciseIndex < exercises.length - 1) {
       setCurrentExerciseIndex((prevIndex) => prevIndex + 1);
     } else {
@@ -28,8 +34,13 @@ const App = () => {
     }
   };
 
-  const handleBack = () => {
-    console.log("WE'RE GOING BACK FROM ", currentExerciseIndex);
+  const handleBack = (completedExerciseId) => {
+    setExercises(prevExercises => 
+      prevExercises.map((exercise, index) =>
+        index === currentExerciseIndex ? { ...exercise, completedExerciseId } : exercise
+      )
+    );
+
     setCurrentExerciseIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
 

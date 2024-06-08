@@ -4,31 +4,32 @@ import '../../App.css';  // Make sure to import your CSS file
 
 const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
   const [sets, setSets] = useState([]);
-  const [completedExerciseId, setCompletedExerciseId] = useState(null);
 
   useEffect(() => {
-    console.log("Reloading with exercise ", exercise);
+    console.log("RELOAD")
     if (exercise) {
-      console.log("Initializing");
+      console.log("LAST EXERCISE ID: ", exercise, exercise.completedExerciseId)
       initializeExercise();
     }
   }, [exercise]);
 
   const initializeExercise = async () => {
     try {
-      console.log("In initialization method");
-
-      // Check if exercise is already initialized
-      // if (completedExerciseId) {
-      //   // Fetch existing sets from backend
-      //   const setsResponse = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises/${completedExerciseId}/sets`, {
-      //     method: 'GET',
-      //     headers: { 'Content-Type': 'application/json' }
-      //   });
-      //   const setsData = await setsResponse.json();
-      //   setSets(setsData.sets || []);
-      // } else {
+      if (exercise.completedExerciseId) {
+        // Fetch existing sets from backend
+        console.log("GETTING PREVIOUS ONES FOR EXERCISE ID: ", exercise.completedExerciseId)
+        const setsResponse = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises/${exercise.completedExerciseId}/sets`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        if (!setsResponse.ok) {
+          throw new Error(`Error fetching sets: ${setsResponse.statusText}`);
+        }
+        const setsData = await setsResponse.json();
+        setSets(setsData.sets || []);
+      } else {
         // Initialize new exercise
+        console.log("THIS IS LOOKING FOR A NEW EXERCISE")
         const startTime = new Date().toISOString();
         const response = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises`, {
           method: 'POST',
@@ -37,7 +38,9 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
         });
 
         const data = await response.json();
-        setCompletedExerciseId(data.completedExerciseId);
+        // Update the parent with the new completedExerciseId
+        exercise.completedExerciseId = data.completedExerciseId;
+        console.log("NEW COMPLETED EXERCISE ID: ", data.completedExerciseId);
 
         // Initialize sets based on exercise type
         const setsToCreate = exercise.set_type_id === 4 ? 1 : 3;
@@ -50,7 +53,7 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
         }));
 
         setSets(initialSets);
-      // }
+      }
     } catch (error) {
       console.error('Error initializing exercise:', error);
     }
@@ -66,7 +69,7 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
 
   const saveSets = async () => {
     try {
-      const response = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises/${completedExerciseId}/sets`, {
+      const response = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises/${exercise.completedExerciseId}/sets`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sets }),
@@ -79,13 +82,15 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
   };
 
   const handleNextExercise = async () => {
+    console.log("HANDLENEXTEXERCISE")
     await saveSets();
-    onSubmit();
+    onSubmit(exercise.completedExerciseId);
   };
 
   const handlePreviousExercise = async () => {
+    console.log("HANDLEPREVIOUSEXERCISE")
     await saveSets();
-    onBack();
+    onBack(exercise.completedExerciseId);
   };
 
   if (!exercise) {
