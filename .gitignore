@@ -32,3 +32,4 @@ yarn-error.log*
 
 # Expo
 .web/
+.DS_Store

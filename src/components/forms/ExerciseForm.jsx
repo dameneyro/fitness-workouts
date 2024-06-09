@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import SetSubform from './SetSubform';
-import '../../App.css';  // Make sure to import your CSS file
+import '../../App.css'; 
 
-const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
+const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack, isLastExercise }) => {
   const [sets, setSets] = useState([]);
   const [originalSets, setOriginalSets] = useState([]);
 
   useEffect(() => {
-    console.log("RELOAD")
     if (exercise) {
-      console.log("LAST EXERCISE ID: ", exercise, exercise.completedExerciseId)
       initializeExercise();
     }
   }, [exercise]);
@@ -18,7 +16,6 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
     try {
       if (exercise.completedExerciseId) {
         // Fetch existing sets from backend
-        console.log("GETTING PREVIOUS ONES FOR EXERCISE ID: ", exercise.completedExerciseId)
         const setsResponse = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises/${exercise.completedExerciseId}/sets`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
@@ -35,7 +32,6 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
         }
       } else {
         // Initialize new exercise
-        console.log("THIS IS LOOKING FOR A NEW EXERCISE")
         const startTime = new Date().toISOString();
         const response = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises`, {
           method: 'POST',
@@ -46,8 +42,6 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
         const data = await response.json();
         // Update the parent with the new completedExerciseId
         exercise.completedExerciseId = data.completedExerciseId;
-        console.log("NEW COMPLETED EXERCISE ID: ", data.completedExerciseId);
-
         initializeNewSets();
       }
     } catch (error) {
@@ -101,8 +95,6 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
 
   const saveSets = async () => {
     try {
-      console.log(" SETS TO SAVE: ", sets);
-      
       const filteredSets = sets
         .filter(set => {
           const { reps, weight, rir, rpe } = set;
@@ -131,8 +123,6 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
         return;
       }
 
-      console.log("FILTERED SETS: ", filteredSets);
-
       const response = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/exercises/${exercise.completedExerciseId}/sets`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -148,13 +138,11 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
   };
 
   const handleNextExercise = async () => {
-    console.log("HANDLENEXTEXERCISE")
     await saveSets();
-    onSubmit(exercise.completedExerciseId);
+    onSubmit(exercise.completedExerciseId, isLastExercise);
   };
 
   const handlePreviousExercise = async () => {
-    console.log("HANDLEPREVIOUSEXERCISE")
     await saveSets();
     onBack(exercise.completedExerciseId);
   };
@@ -172,7 +160,7 @@ const ExerciseForm = ({ workoutId, exercise, onSubmit, onBack }) => {
       ))}
       <div className="button-group">
         <button onClick={handlePreviousExercise}>Previous Exercise</button>
-        <button onClick={handleNextExercise}>Next Exercise</button>
+        <button onClick={handleNextExercise}>{isLastExercise ? 'Complete Workout' : 'Next Exercise'}</button>
       </div>
     </div>
   );

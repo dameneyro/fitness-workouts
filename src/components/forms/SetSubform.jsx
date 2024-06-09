@@ -41,7 +41,7 @@ const SetSubform = ({ set, index, onChange, setType }) => {
         <label>RIR:</label>
         <select value={rir !== null ? rir : ''} onChange={handleRirChange}>
           <option value="">Select RIR</option>
-          {[...Array(6).keys()].map(value => (
+          {[...Array(11).keys()].map(value => (
             <option key={value} value={value}>{value}</option>
           ))}
         </select>

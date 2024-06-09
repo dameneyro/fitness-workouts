@@ -16,21 +16,39 @@ const App = () => {
     setCurrentExerciseIndex(0);
   };
 
-  const handleExerciseSubmit = (completedExerciseId) => {
+  const handleExerciseSubmit = async (completedExerciseId, isLastExercise) => {
     setExercises(prevExercises => 
       prevExercises.map((exercise, index) =>
         index === currentExerciseIndex ? { ...exercise, completedExerciseId } : exercise
       )
     );
 
-    if (currentExerciseIndex < exercises.length - 1) {
-      setCurrentExerciseIndex((prevIndex) => prevIndex + 1);
+    if (isLastExercise) {
+      await handleCompleteWorkout();
     } else {
+      setCurrentExerciseIndex((prevIndex) => prevIndex + 1);
+    }
+  };
+
+  const handleCompleteWorkout = async () => {
+    try {
+      const response = await fetch(`https://bwg36wqc6b.execute-api.us-east-1.amazonaws.com/dev/workouts/${workoutId}/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error completing workout: ${response.statusText}`);
+      }
+
       alert('Workout complete!');
       setUserId('');
       setWorkoutId(null);
       setExercises([]);
       setCurrentExerciseIndex(0);
+    } catch (error) {
+      console.error('Error completing workout:', error);
+      alert('Failed to complete workout. Please try again.');
     }
   };
 
@@ -55,6 +73,7 @@ const App = () => {
             exercise={exercises[currentExerciseIndex]}
             onSubmit={handleExerciseSubmit}
             onBack={handleBack}
+            isLastExercise={currentExerciseIndex === exercises.length - 1}
           />
         ) : (
           <p>Loading exercise...</p>
